@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "578264285091",
+    "project_id": "finalbloc",
+    "storage_bucket": "finalbloc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578264285091:android:0aa0a7981f785569a2e416",
+        "android_client_info": {
+          "package_name": "com.example.finals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578264285091-pu356guv8li7jdfst70sctcgctqij226.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7SfOZJBI2W5OTk18TPlVMa2i7gJFQYRs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578264285091-pu356guv8li7jdfst70sctcgctqij226.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "578264285091-tsqr2d6218vrmgijsdq88s75k0j7kuoe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.finals"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
