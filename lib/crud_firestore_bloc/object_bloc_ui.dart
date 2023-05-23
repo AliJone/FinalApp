@@ -5,6 +5,7 @@ import 'package:finals/crud_firestore_bloc/repo/object_repository.dart';
 import 'package:finals/crud_firestore_bloc/ui_bloc/object_bloc.dart';
 import 'package:finals/crud_firestore_bloc/model/object_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finals/crud_firestore_bloc/object_bloc_ui edit.dart';
 
 class ObjectBlocUI extends StatelessWidget {
   final ObjectRepository objectRepository = ObjectRepository(
@@ -12,111 +13,71 @@ class ObjectBlocUI extends StatelessWidget {
   );
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _mobileNoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ObjectBloc(obj: objectRepository)
+      create: (context1) => ObjectBloc(obj: objectRepository)
         ..add(LoadUserObjectEvent()), // Event to load all objects
       child: MaterialApp(
         title: 'CRUD Operations',
         home: Scaffold(
           appBar: AppBar(
-            title: Text('Object Details'),
+            title: Text('Friends'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  //navigate to /add
+                  Navigator.pushNamed(context, '/add');
+                },
+              )
+            ],
           ),
           body: BlocBuilder<ObjectBloc, ObjectState>(
-            builder: (context, state) {
+            builder: (context23, state) {
               if (state is ObjectLoadingState) {
                 return Center(child: CircularProgressIndicator());
               } else if (state is ObjectLoadedState) {
                 return ListView.builder(
                   itemCount: state.obj.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(state.obj[index].name),
-                      subtitle: Text(state.obj[index].bio),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              _nameController.text = state.obj[index].name;
-                              _bioController.text = state.obj[index].bio;
-                              _emailController.text = state.obj[index].email;
-
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('Edit the object'),
-                                      content: Column(
-                                        children: <Widget>[
-                                          TextField(
-                                            controller: _nameController,
-                                          ),
-                                          TextField(
-                                            controller: _bioController,
-                                          ),
-                                          TextField(
-                                            controller: _emailController,
-                                          ),
-                                        ],
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text("Update"),
-                                          onPressed: () {
-                                            if (_nameController
-                                                    .text.isNotEmpty &&
-                                                _bioController
-                                                    .text.isNotEmpty &&
-                                                _emailController
-                                                    .text.isNotEmpty) {
-                                              ObjectModel updatedObj =
-                                                  ObjectModel(
-                                                name: _nameController.text,
-                                                bio: _bioController.text,
-                                                email: _emailController.text,
-                                                id: state.obj[index].id,
-                                              );
-                                              BlocProvider.of<ObjectBloc>(
-                                                      context)
-                                                  .add(
-                                                UpdateUserObjectEvent(
-                                                    obj: updatedObj),
-                                              );
-                                              Navigator.of(context).pop();
-                                            } else {
-                                              print(
-                                                  "Please fill all the fields");
-                                            }
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: Text("Cancel"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                  useRootNavigator: false);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              // functionality to delete object
-                              BlocProvider.of<ObjectBloc>(context).add(
-                                DeleteUserObjectEvent(obj: state.obj[index]),
-                              );
-                            },
-                          ),
-                        ],
+                  itemBuilder: (context2, index) {
+                    return Container(
+                      child: ListTile(
+                        onTap: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ObjectBlocUIEDIT(
+                                  text: index.toString(),
+                                ),
+                              ))
+                        },
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              AssetImage("assets/images/google.png"),
+                        ),
+                        title: Text(state.obj[index].name),
+                        subtitle: Text(state.obj[index].mobileNo),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                // functionality to delete object
+                                BlocProvider.of<ObjectBloc>(context2).add(
+                                  DeleteUserObjectEvent(obj: state.obj[index]),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -128,72 +89,27 @@ class ObjectBlocUI extends StatelessWidget {
               }
             },
           ),
-          floatingActionButton:
-              BlocBuilder<ObjectBloc, ObjectState>(builder: (context, state) {
-            return FloatingActionButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Create a new object'),
-                        content: Column(
-                          children: <Widget>[
-                            TextField(
-                              controller: _nameController,
-                              decoration:
-                                  InputDecoration(hintText: "Enter Name"),
-                            ),
-                            TextField(
-                              controller: _bioController,
-                              decoration:
-                                  InputDecoration(hintText: "Enter Bio"),
-                            ),
-                            TextField(
-                              controller: _emailController,
-                              decoration:
-                                  InputDecoration(hintText: "Enter Email"),
-                            ),
-                          ],
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text("Create"),
-                            onPressed: () {
-                              if (_nameController.text.isNotEmpty &&
-                                  _bioController.text.isNotEmpty &&
-                                  _emailController.text.isNotEmpty) {
-                                ObjectModel newObj = ObjectModel(
-                                  name: _nameController.text,
-                                  bio: _bioController.text,
-                                  email: _emailController.text,
-                                );
-                                BlocProvider.of<ObjectBloc>(context).add(
-                                  CreateUserObjectEvent(obj: newObj),
-                                );
-                                Navigator.of(context).pop();
-                                _nameController.clear();
-                                _bioController.clear();
-                                _emailController.clear();
-                              } else {
-                                print("Please fill all the fields");
-                              }
-                            },
-                          ),
-                          TextButton(
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                    useRootNavigator: false);
-              },
-              child: Icon(Icons.add),
-            );
-          }),
+          bottomNavigationBar: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                  backgroundColor: Colors.black,
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                  backgroundColor: Colors.black,
+                ),
+              ],
+              currentIndex: 0,
+              onTap: (index) {
+                if (index == 0) {
+                  Navigator.pushNamed(context, "/crud");
+                } else if (index == 1) {
+                  Navigator.pushNamed(context, "/profile");
+                }
+              }),
         ),
       ),
     );

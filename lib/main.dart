@@ -1,5 +1,6 @@
 import 'package:finals/firebase_options.dart';
 import 'package:finals/login.dart';
+import 'package:finals/profile.dart';
 import 'package:finals/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:finals/profile_bloc/ui_bloc/profile_bloc.dart';
@@ -7,6 +8,8 @@ import 'package:finals/profile_bloc/repo/profile_repository.dart';
 import 'package:finals/crud_firestore_bloc/ui_bloc/object_bloc.dart';
 import 'package:finals/crud_firestore_bloc/repo/object_repository.dart';
 import 'package:finals/crud_firestore_bloc/object_bloc_ui.dart';
+import 'package:finals/crud_firestore_bloc/object_bloc_ui add.dart';
+import 'package:finals/crud_firestore_bloc/object_bloc_ui edit.dart';
 
 import 'package:finals/data_bloc/data_bloc_ui.dart';
 import 'package:finals/profile_bloc/profile_bloc_ui.dart';
@@ -38,11 +41,28 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        initialRoute: '/',
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/add',
         routes: {
-          '/': (BuildContext context) => Home(),
-          '/login': (BuildContext context) => LoginPage(),
-          '/signUp': (BuildContext context) => SignUp(),
+          '/': (BuildContext context) => LoginPage(),
+          '/add': (BuildContext context) => BlocProvider<ObjectBloc>(
+                create: (context) => ObjectBloc(
+                  obj: ObjectRepository(
+                    firebaseFirestore: FirebaseFirestore.instance,
+                  ),
+                ),
+                child: ObjectBlocUIADD(),
+              ),
+          // '/edit': (BuildContext context) => BlocProvider<ObjectBloc>(
+          //       create: (context) => ObjectBloc(
+          //         obj: ObjectRepository(
+          //           firebaseFirestore: FirebaseFirestore.instance,
+          //         ),
+          //       ),
+          //       child: ObjectBlocUIEDIT(),
+          //     ),
+          // '/login': (BuildContext context) => LoginPage(),
+          // '/signUp': (BuildContext context) => SignUp(),
           '/crud': (BuildContext context) => BlocProvider<ObjectBloc>(
                 create: (context) => ObjectBloc(
                   obj: ObjectRepository(
@@ -51,15 +71,7 @@ class MyApp extends StatelessWidget {
                 ),
                 child: ObjectBlocUI(),
               ),
-          '/profileform': (BuildContext context) => BlocProvider<ProfileBloc>(
-                create: (context) => ProfileBloc(
-                  profileRepository: ProfileRepository(
-                    firebaseFirestore: FirebaseFirestore.instance,
-                  ),
-                ),
-                child: ProfilePage(),
-              ),
-          '/data': (BuildContext context) => data_bloc_ui(),
+          '/profile': (BuildContext context) => Profiling(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
